@@ -1,0 +1,30 @@
+name: Problem Matcher Demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/problem-matcher.json'
+      - '.github/workflows/demo.yml'
+      - 'scripts/**'
+      - 'demo/**'
+      - 'README.md'
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Register problem matcher
+        run: echo '::add-matcher::.github/problem-matcher.json'
+
+      - name: Emit demo diagnostics
+        run: bash scripts/emit-demo-errors.sh
+
+      - name: Remove problem matcher
+        if: always()
+        run: echo '::remove-matcher owner=test-failure::'
