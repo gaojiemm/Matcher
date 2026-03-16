@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/problem-matcher.json'
       - '.github/workflows/demo.yml'
+      - 'k8s/**'
       - 'scripts/**'
       - 'demo/**'
       - 'README.md'
@@ -22,8 +23,8 @@ jobs:
       - name: Register problem matcher
         run: echo '::add-matcher::.github/problem-matcher.json'
 
-      - name: Emit demo diagnostics
-        run: bash scripts/emit-demo-errors.sh
+      - name: Emit image pull diagnostics
+        run: bash scripts/emit-imagepull-errors.sh
 
       - name: Remove problem matcher
         if: always()
