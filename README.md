@@ -1,20 +1,20 @@
-# Problem Matcher Demo for GitHub Actions
+# GitHub Actions 向け Problem Matcher デモ
 
-This repository demonstrates how to use a custom GitHub Actions problem matcher to turn plain command-line output into structured annotations in the Actions UI.
+このリポジトリでは、GitHub Actions のカスタム Problem Matcher を使って、通常のコマンドライン出力を Actions UI 上の構造化されたアノテーションに変換する方法を紹介します。
 
-## What Is a Problem Matcher
+## Problem Matcher とは
 
-Problem matchers let GitHub Actions recognize errors and warnings from tool output. If a line of output matches a configured regular expression, GitHub can attach that issue to a file, line, and column so it shows up in the workflow summary and log annotations.
+Problem Matcher を使うと、GitHub Actions はツールの出力からエラーや警告を認識できます。出力の 1 行が設定された正規表現に一致すると、GitHub はその問題をファイル、行番号、列番号に関連付けて、workflow summary やログアノテーションに表示できます。
 
-This is useful when:
+次のような場面で便利です。
 
-- You have an internal script that prints errors in a fixed format.
-- You want lightweight annotations without building a full GitHub Action.
-- You need CI logs to point directly to the failing source location.
+- 固定フォーマットでエラーを出力する社内スクリプトがある
+- 完全な GitHub Action を作らずに軽量なアノテーションを使いたい
+- CI ログから失敗したソース位置へ直接たどれるようにしたい
 
-## Repository Structure
+## リポジトリ構成
 
-This repository now includes a complete runnable demo:
+このリポジトリには、すぐに動かせる完全なデモが含まれています。
 
 ```text
 .github/
@@ -28,9 +28,9 @@ scripts/
 README.md
 ```
 
-## Matcher Configuration
+## Matcher の設定
 
-The matcher is defined in `.github/problem-matcher.json` and uses this pattern:
+Matcher は `.github/problem-matcher.json` で定義されており、次のパターンを使用します。
 
 ```json
 {
@@ -55,43 +55,43 @@ The matcher is defined in `.github/problem-matcher.json` and uses this pattern:
 }
 ```
 
-It expects command output in this exact format:
+この Matcher は、コマンド出力が次の形式であることを前提にしています。
 
 ```text
 path/to/file.ext:line:column message
 ```
 
-Example:
+例:
 
 ```text
 src/example.js:12:5 Unexpected token
 tests/login.spec.ts:34:9 Assertion failed: expected 200, received 500
 ```
 
-## How It Works
+## 仕組み
 
-The regular expression captures four values:
+この正規表現では次の 4 つの値を取得します。
 
-1. File path
-2. Line number
-3. Column number
-4. Message text
+1. ファイルパス
+2. 行番号
+3. 列番号
+4. メッセージ本文
 
-When a log line matches, GitHub Actions creates an annotation tied to that file location. Because `fileLocation` is set to `relative`, the printed file path should be relative to the repository root.
+ログの 1 行が一致すると、GitHub Actions はそのファイル位置に紐づいたアノテーションを作成します。`fileLocation` は `relative` に設定されているため、出力されるファイルパスはリポジトリルートからの相対パスである必要があります。
 
-## Using the Matcher in a Workflow
+## Workflow での使い方
 
-You can load the matcher at runtime with the special `::add-matcher::` command.
+特別な `::add-matcher::` コマンドを使うことで、実行時に Matcher を読み込めます。
 
-The repository already includes a working example in `.github/workflows/demo.yml`.
+このリポジトリには、`.github/workflows/demo.yml` に動作するサンプルがすでに含まれています。
 
-It does three things:
+この workflow は次の 3 つを行います。
 
-1. Registers the matcher.
-2. Runs a script that prints matching diagnostics.
-3. Removes the matcher at the end of the job.
+1. Matcher を登録する
+2. 一致する診断メッセージを出力するスクリプトを実行する
+3. ジョブの最後に Matcher を削除する
 
-Workflow content:
+Workflow の内容:
 
 ```yaml
 name: Problem Matcher Demo
@@ -118,11 +118,11 @@ jobs:
 				run: echo '::remove-matcher owner=test-failure::'
 ```
 
-Once the job runs, the output from `scripts/emit-demo-errors.sh` should appear as annotations against `demo/example.js` in the Actions log.
+ジョブが実行されると、`scripts/emit-demo-errors.sh` の出力が Actions のログ上で `demo/example.js` に対するアノテーションとして表示されるはずです。
 
-## Demo Script Output
+## デモスクリプトの出力
 
-The demo script prints these lines:
+デモスクリプトは次の行を出力します。
 
 ```text
 demo/example.js:4:3 Unexpected console usage in demo check
@@ -130,63 +130,63 @@ demo/example.js:9:10 Missing validation before request execution
 demo/example.js:14:5 Hard-coded fallback should be removed
 ```
 
-Because `demo/example.js` exists in the repository, GitHub Actions can attach each annotation to a real file location.
+`demo/example.js` は実在するファイルなので、GitHub Actions は各アノテーションを実際のファイル位置に関連付けられます。
 
-## Local Output Rules
+## ローカル出力のルール
 
-If you want your own script or test runner to work with this matcher, make sure it prints lines that follow the configured format exactly.
+独自のスクリプトやテストランナーをこの Matcher に対応させたい場合は、設定された形式どおりに行を出力する必要があります。
 
-Good:
+一致する例:
 
 ```text
 src/app.py:18:2 Undefined variable 'user_id'
 ```
 
-Not matched:
+一致しない例:
 
 ```text
 Error in src/app.py on line 18: Undefined variable 'user_id'
 ```
 
-The second example will not be recognized because it does not match the configured regular expression.
+2 つ目の例は、設定された正規表現に一致しないため認識されません。
 
-## Common Use Cases
+## よくある利用ケース
 
-- Custom test harnesses
-- Internal linters
-- Build scripts
-- Migration or validation scripts
-- Monorepo tooling that emits file-based diagnostics
+- カスタムテストハーネス
+- 社内用リンター
+- ビルドスクリプト
+- マイグレーションや検証用スクリプト
+- ファイルベースの診断を出力するモノレポ向けツール
 
-## Debugging Tips
+## デバッグのヒント
 
-If annotations are not showing up in GitHub Actions, check the following:
+GitHub Actions 上でアノテーションが表示されない場合は、次の点を確認してください。
 
-1. The matcher file is loaded with `::add-matcher::` before the output is printed.
-2. The logged path is relative to the repository root.
-3. The output line includes both line and column numbers.
-4. The output format matches the regexp exactly.
-5. The file actually exists in the checked-out workspace.
+1. 出力を行う前に `::add-matcher::` で matcher ファイルを読み込んでいるか
+2. ログに出しているパスがリポジトリルートからの相対パスになっているか
+3. 出力行に行番号と列番号の両方が含まれているか
+4. 出力形式が regexp と完全に一致しているか
+5. 対象ファイルが checkout 済みの workspace 内に実在するか
 
-## Running the Demo
+## デモの実行方法
 
-To see the matcher in action:
+Matcher の動作を確認するには、次の手順を実行します。
 
-1. Push the repository to GitHub.
-2. Open the Actions tab.
-3. Run the `Problem Matcher Demo` workflow, or trigger it with a push to `main`.
-4. Open the job log and inspect the generated annotations.
+1. このリポジトリを GitHub に push する
+2. Actions タブを開く
+3. `Problem Matcher Demo` workflow を実行する、または `main` への push で起動する
+4. ジョブのログを開いて生成されたアノテーションを確認する
 
-## Next Improvement Ideas
+## 今後の改善案
 
-This demo can be extended in a few useful ways:
+このデモは、たとえば次のように拡張できます。
 
-- Support warnings and errors with separate matcher definitions.
-- Add multi-line patterns for stack traces or grouped test output.
-- Add a second matcher for another tool format.
-- Add a small test step that asserts the script output format stays compatible.
+- warning と error を別々の matcher 定義で扱えるようにする
+- スタックトレースやグループ化されたテスト出力向けに複数行パターンを追加する
+- 別のツール形式に対応した 2 つ目の matcher を追加する
+- スクリプトの出力形式が互換性を維持していることを確認する小さなテストステップを追加する
 
-## References
+## 参考資料
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Problem Matchers Documentation](https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#problem-matchers)
