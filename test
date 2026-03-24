@@ -1,0 +1,10 @@
+graph TD
+    A[获取 GitHub Changelog 的 RSS] --> B[筛选指定期间的投稿]
+    B --> C["格式化 Action & Copilot 相关更新 (日语)"]
+    C --> D[写入 CHANGELOG.md]
+
+    %% 样式设置，让它看起来更漂亮
+    style A fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style B fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    style C fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style D fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
