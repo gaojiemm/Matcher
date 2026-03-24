@@ -1,10 +1,17 @@
-graph TD
-    A[获取 GitHub Changelog 的 RSS] --> B[筛选指定期间的投稿]
-    B --> C["格式化 Action & Copilot 相关更新 (日语)"]
-    C --> D[写入 CHANGELOG.md]
+flowchart TD
 
-    %% 样式设置，让它看起来更漂亮
-    style A fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style B fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    style C fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
-    style D fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+%% ===== 1. 定义节点和连接 =====
+    Start([📅 毎週水曜日<br/>Workflow Schedule Trigger]) :::trigger
+    Run[🚀 GitHub Actions 起動] :::action
+    Process[🤖 处理数据] :::ai
+    End([📝 更新 CHANGELOG.md]) :::notify
+
+    Start --> Run
+    Run --> Process
+    Process --> End
+
+%% ===== 2. 样式定义 (你代码中已有的) =====
+    classDef trigger fill:#fde2b1,stroke:#e9b979,stroke-width:1px,color:#333
+    classDef action fill:#d8e7ff,stroke:#7aa8ff,stroke-width:1px,color:#333
+    classDef ai fill:#ebd9ff,stroke:#b799ff,stroke-width:1px,color:#333
+    classDef notify fill:#d4f9ec,stroke:#6ed1b8,stroke-width:1px,color:#333
