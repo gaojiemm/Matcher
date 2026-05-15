@@ -6,7 +6,11 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 SCRIPT_ABS_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 SCRIPT_REL_PATH="${SCRIPT_ABS_PATH#"$ROOT_DIR"/}"
-NODE20_MATCH_PATTERN='node20|Node20|node[-_ ]20|Node[-_ ]20|node:20|node-version[[:space:]]*:[[:space:]]*["'"'"']?20(\.x)?["'"'"']?|NODE_VERSION[[:space:]]*[:=][[:space:]]*["'"'"']?20(\.x)?["'"'"']?'
+NODE20_MATCH_PATTERN=$(
+  cat <<'PATTERN'
+node20|Node20|node[-_ ]20|Node[-_ ]20|node:20|node-version[[:space:]]*:[[:space:]]*["']?20(\.x)?["']?|NODE_VERSION[[:space:]]*[:=][[:space:]]*["']?20(\.x)?["']?
+PATTERN
+)
 NODE20_REPLACE_SCRIPT=$(
   cat <<'PERL'
     s/\bnode20\b/node24/g;
@@ -27,7 +31,7 @@ while IFS= read -r file; do
   fi
 
   case "$file" in
-    "$SCRIPT_REL_PATH"|".github/workflows/upgrade-node20-to-node24.yml"|"README.md")
+    "$SCRIPT_REL_PATH"|".github/workflows/upgrade-node-to-node24.yml")
       continue
       ;;
   esac

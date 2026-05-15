@@ -1,4 +1,4 @@
-name: One-click Node 20 to 24 Upgrade
+name: One-click Node to 24 Upgrade
 
 on:
   workflow_dispatch:
@@ -15,8 +15,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Node 20 to 24 upgrade script
-        run: bash scripts/upgrade-node20-to-node24.sh
+      - name: Run Node to 24 upgrade script
+        run: bash scripts/upgrade-node-to-node24.sh
 
       - name: Prepare branch and commit
         id: commit
