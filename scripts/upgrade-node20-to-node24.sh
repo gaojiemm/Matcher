@@ -6,6 +6,18 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 SCRIPT_ABS_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 SCRIPT_REL_PATH="${SCRIPT_ABS_PATH#"$ROOT_DIR"/}"
+NODE20_MATCH_PATTERN='node20|Node20|node[-_ ]20|Node[-_ ]20|node:20|node-version[[:space:]]*:[[:space:]]*["'"'"']?20(\.x)?["'"'"']?|NODE_VERSION[[:space:]]*[:=][[:space:]]*["'"'"']?20(\.x)?["'"'"']?'
+NODE20_REPLACE_SCRIPT=$(
+  cat <<'PERL'
+    s/\bnode20\b/node24/g;
+    s/\bNode20\b/Node24/g;
+    s/\bnode([-_ ])20\b/node$124/g;
+    s/\bNode([-_ ])20\b/Node$124/g;
+    s/\bnode:20(?=\b|[.:-])/node:24/g;
+    s/(\bnode-version\s*:\s*["\x27]?)20(?:\.x)?(["\x27]?)/${1}24$2/g;
+    s/(\bNODE_VERSION\s*[:=]\s*["\x27]?)20(?:\.x)?(["\x27]?)/${1}24$2/g;
+PERL
+)
 
 changed_files=()
 
@@ -24,21 +36,13 @@ while IFS= read -r file; do
     continue
   fi
 
-  if ! grep -Eq 'node20|Node20|node[-_ ]20|Node[-_ ]20|node:20|node-version[[:space:]]*:[[:space:]]*["'"'"']?20(\.x)?["'"'"']?|NODE_VERSION[[:space:]]*[:=][[:space:]]*["'"'"']?20(\.x)?["'"'"']?' "$file"; then
+  if ! grep -Eq "$NODE20_MATCH_PATTERN" "$file"; then
     continue
   fi
 
   before_hash="$(sha256sum "$file" | awk '{print $1}')"
 
-  perl -0pi -e '
-    s/\bnode20\b/node24/g;
-    s/\bNode20\b/Node24/g;
-    s/\bnode([-_ ])20\b/node$124/g;
-    s/\bNode([-_ ])20\b/Node$124/g;
-    s/\bnode:20(?=\b|[.:-])/node:24/g;
-    s/(\bnode-version\s*:\s*["\x27]?)20(?:\.x)?(["\x27]?)/${1}24$2/g;
-    s/(\bNODE_VERSION\s*[:=]\s*["\x27]?)20(?:\.x)?(["\x27]?)/${1}24$2/g;
-  ' "$file"
+  perl -0pi -e "$NODE20_REPLACE_SCRIPT" "$file"
 
   after_hash="$(sha256sum "$file" | awk '{print $1}')"
   if [[ "$before_hash" != "$after_hash" ]]; then
