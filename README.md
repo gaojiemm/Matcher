@@ -198,6 +198,25 @@ Matcher の動作を確認するには、次の手順を実行します。
 bash scripts/emit-imagepull-errors.sh
 ```
 
+## Node 20 → Node 24 一鍵アップグレード自動化
+
+このリポジトリには、Node 20 表記を Node 24 に更新する自動化を追加しています。
+
+- スクリプト: `scripts/upgrade-node20-to-node24.sh`
+- workflow: `.github/workflows/upgrade-node20-to-node24.yml`
+
+### ローカル実行
+
+```bash
+bash scripts/upgrade-node20-to-node24.sh
+```
+
+### GitHub Actions で一鍵実行
+
+1. Actions タブで `One-click Node 20 to 24 Upgrade` を実行
+2. 変更があれば `automation/node24-upgrade-<run_id>` ブランチが自動作成される
+3. そのブランチから PR を作成して取り込む
+
 ## 今後の改善案
 
 このデモは、たとえば次のように拡張できます。

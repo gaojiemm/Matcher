@@ -1,0 +1,46 @@
+name: One-click Node 20 to 24 Upgrade
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Node 20 to 24 upgrade script
+        run: bash scripts/upgrade-node20-to-node24.sh
+
+      - name: Prepare branch and commit
+        id: commit
+        run: |
+          if git diff --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected after upgrade."
+            exit 0
+          fi
+
+          branch="automation/node24-upgrade-${GITHUB_RUN_ID}"
+          echo "branch=$branch" >> "$GITHUB_OUTPUT"
+
+          git switch -c "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: automate Node 20 to Node 24 upgrade"
+          git push origin "$branch"
+
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+
+      - name: Upgrade result
+        if: steps.commit.outputs.has_changes == 'true'
+        run: |
+          echo "Upgrade branch pushed: ${{ steps.commit.outputs.branch }}"
+          echo "Open a PR from this branch to merge the Node 24 upgrade."
