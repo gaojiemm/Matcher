@@ -4,7 +4,12 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
-SCRIPT_REL_PATH="$(realpath --relative-to="$ROOT_DIR" "${BASH_SOURCE[0]}")"
+SCRIPT_REL_PATH="${BASH_SOURCE[0]}"
+if [[ "$SCRIPT_REL_PATH" == "$ROOT_DIR/"* ]]; then
+  SCRIPT_REL_PATH="${SCRIPT_REL_PATH#"$ROOT_DIR"/}"
+else
+  SCRIPT_REL_PATH="${SCRIPT_REL_PATH#./}"
+fi
 NODE20_MATCH_PATTERN=$(
   cat <<'PATTERN'
 node20|Node20|node[-_ ]20|Node[-_ ]20|node:20|node-version[[:space:]]*:[[:space:]]*["']?20(\.x)?["']?|NODE_VERSION[[:space:]]*[:=][[:space:]]*["']?20(\.x)?["']?
