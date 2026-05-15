@@ -83,19 +83,23 @@ Node 20 から 24 へ上げるときの一番重要な変更点は、`action.yml
 
 `.github/workflows/node24-action-demo.yml` ではこの 3 つのローカル action を実際に呼び出して出力まで確認できます。ローカルでは `scripts/test-common-actions.sh` で動作確認、`scripts/build-common-actions.sh` で依存インストールとパッケージングをまとめて実行できます。
 
+また、`scripts/upgrade-node-runtime.sh <target-major>` を使うと、`action.yml`、`package.json`、`package-lock.json`、workflow、関連ドキュメント中の runtime 宣言をまとめて target version に更新できます。ローカルの Node major version が target と一致している場合は、更新後に build と test まで自動実行します。
+
 ## 20 から 24 への upgrade 検証手順
 
 この checkout はすでに Node 24 へ上がった後の状態なので、ここだけでは「Node 20 版が正常だったこと」までは証明できません。upgrade を確認するには、upgrade 前後の 2 つの revision で同じ観点を確認する必要があります。
 
 推奨手順は次のとおりです。
 
-1. upgrade 前の revision を checkout し、`bash scripts/verify-action-runtime.sh 20` を実行する
+1. upgrade 前の revision を checkout し、`bash scripts/verify-action-runtime.sh 24` を実行する
 2. Node 20 環境で、その revision の build と test を実行して正常終了を確認する
 3. upgrade 後の revision を checkout し、`bash scripts/verify-action-runtime.sh 24` を実行する
 4. Node 24 環境で `bash scripts/build-common-actions.sh` と `bash scripts/test-common-actions.sh` を実行する
 5. upgrade 前後で、入力に対する出力仕様が変わっていないことを確認する
 
 現在の revision では、4 の手順はそのまま実行できます。1 と 2 は、Node 20 を使っていた upgrade 前の branch または tag が必要です。
+
+`scripts/upgrade-node-runtime.sh` は upgrade 作業を自動化できますが、「正常に使えること」の保証は宣言変更そのものではなく、その後に通る `verify-action-runtime.sh`、`build-common-actions.sh`、`test-node24-action.sh`、`test-common-actions.sh` の結果で判断します。
 
 ## Matcher の設定
 

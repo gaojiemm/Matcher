@@ -27557,6 +27557,11 @@ module.exports = parseParams
 var __webpack_exports__ = {};
 const core = __nccwpck_require__(7484);
 
+function getRuntimeLabel() {
+  const runtimeMajor = process.versions.node.split('.')[0];
+  return `node${runtimeMajor}`;
+}
+
 function getInput(name, options = {}) {
   const directValue = core.getInput(name);
 
@@ -27597,7 +27602,7 @@ function run() {
 
   const pipelineContext = {
     service,
-    runtime: 'node24',
+    runtime: getRuntimeLabel(),
     generatedAt: new Date().toISOString(),
     testParallelKeys,
   };

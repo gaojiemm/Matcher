@@ -42,6 +42,7 @@ scripts/
   build-common-actions.sh
   test-common-actions.sh
   test-node24-action.sh
+  upgrade-node-runtime.sh
   verify-action-runtime.sh
 .github/workflows/
   node24-action-demo.yml
@@ -55,6 +56,7 @@ scripts/
 - `common/*/package.json`：依赖、Node 版本、打包脚本定义
 - `common/*/package-lock.json`：依赖锁定文件
 - `scripts/*.sh`：构建、测试、校验脚本
+- `scripts/upgrade-node-runtime.sh`：批量升级 Node runtime 声明并执行验证
 - `.github/workflows/node24-action-demo.yml`：CI 演示工作流
 
 ## 3. 三个 Node 24 Action 的作用
@@ -319,6 +321,34 @@ bash scripts/verify-action-runtime.sh 24
 
 这个脚本用于检查“声明是否一致”，不直接验证业务逻辑是否正确。
 
+### 10.2 upgrade-node-runtime.sh
+
+命令：
+
+```bash
+bash scripts/upgrade-node-runtime.sh 24
+```
+
+只更新声明，不立即验证时：
+
+```bash
+bash scripts/upgrade-node-runtime.sh 24 --skip-validate
+```
+
+作用：
+
+- 批量更新所有 `action.yml` 中的 `runs.using`
+- 批量更新所有 `package.json`、`package-lock.json` 中的 Node engine 声明
+- 更新 workflow 中的 `node-version`
+- 更新 README 和说明文档中的主要版本描述
+- 在本地 Node major version 与目标版本一致时，自动执行校验与测试
+
+注意：
+
+- 这个脚本负责“自动修改”和“自动触发验证”
+- 它不能仅凭修改版本号就保证项目一定可用
+- 最终是否可用，仍以 build 与 test 结果为准
+
 ## 11. Node 20 升级到 Node 24 的关键点
 
 从 Node 20 升级到 Node 24，至少要同步修改以下三处：
@@ -335,12 +365,26 @@ bash scripts/verify-action-runtime.sh 24
 
 因此，真正的升级不是“改一个数字”，而是让三层声明同时一致。
 
+为了减少以后从 Node 24 再升级到更高版本时的修改量，当前示例已经把源码和测试中的 runtime 期望改成了基于当前运行 Node major version 的动态计算。这样后续升级时，主要需要变更的是声明文件，而不是业务代码本身。
+
 ## 12. 推荐执行顺序
 
 ### 12.1 本地构建
 
 ```bash
 bash scripts/build-common-actions.sh
+```
+
+### 12.0 自动升级并验证
+
+```bash
+bash scripts/upgrade-node-runtime.sh 24
+```
+
+如果当前本地 Node 版本不是目标版本，可以先只改声明：
+
+```bash
+bash scripts/upgrade-node-runtime.sh 24 --skip-validate
 ```
 
 ### 12.2 本地功能验证

@@ -3,6 +3,8 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
+expected_runtime="node$(node -p "process.versions.node.split('.')[0]")"
+expected_runtime_major="$(node -p "process.versions.node.split('.')[0]")"
 
 if ! command -v node >/dev/null 2>&1; then
   echo "node is required but was not found in PATH" >&2
@@ -38,7 +40,7 @@ test_create_pipeline_context() {
     node dist/index.js
   local output
   output="$(cat "$output_file")"
-  assert_contains "$output" '"service":"matcher-demo","runtime":"node24"'
+  assert_contains "$output" "\"service\":\"matcher-demo\",\"runtime\":\"$expected_runtime\""
   assert_contains "$output" '["unit-1","unit-2"]'
   printf '%s\n' "$output"
   rm -f "$output_file"
@@ -66,13 +68,13 @@ test_js_action_template() {
   echo "== js-action-template success =="
   run_action common/js-action-template env \
     INPUT_NAME=matcher-demo \
-    INPUT_PAYLOAD='{"feature":"node24"}' \
+    INPUT_PAYLOAD='{"feature":"runtime-check"}' \
     GITHUB_OUTPUT="$output_file" \
     node dist/index.js
   local output
   output="$(cat "$output_file")"
-  assert_contains "$output" 'Hello, matcher-demo from Node 24.'
-  assert_contains "$output" '{"feature":"node24"}'
+  assert_contains "$output" "Hello, matcher-demo from Node ${expected_runtime_major}."
+  assert_contains "$output" '{"feature":"runtime-check"}'
   printf '%s\n' "$output"
   rm -f "$output_file"
 }

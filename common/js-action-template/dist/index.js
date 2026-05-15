@@ -27557,6 +27557,10 @@ module.exports = parseParams
 var __webpack_exports__ = {};
 const core = __nccwpck_require__(7484);
 
+function getRuntimeMajor() {
+  return process.versions.node.split('.')[0];
+}
+
 function parsePayload(rawPayload) {
   let parsed;
 
@@ -27576,7 +27580,7 @@ function parsePayload(rawPayload) {
 try {
   const name = core.getInput('name', { required: true }).trim();
   const payload = parsePayload(core.getInput('payload'));
-  const message = `Hello, ${name} from Node 24.`;
+  const message = `Hello, ${name} from Node ${getRuntimeMajor()}.`;
 
   core.setOutput('message', message);
   core.setOutput('payload', JSON.stringify(payload));

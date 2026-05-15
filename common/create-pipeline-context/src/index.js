@@ -1,5 +1,10 @@
 const core = require('@actions/core');
 
+function getRuntimeLabel() {
+  const runtimeMajor = process.versions.node.split('.')[0];
+  return `node${runtimeMajor}`;
+}
+
 function getInput(name, options = {}) {
   const directValue = core.getInput(name);
 
@@ -40,7 +45,7 @@ function run() {
 
   const pipelineContext = {
     service,
-    runtime: 'node24',
+    runtime: getRuntimeLabel(),
     generatedAt: new Date().toISOString(),
     testParallelKeys,
   };

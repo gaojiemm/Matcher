@@ -5,6 +5,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "$0")/.." && pwd)"
 action_dir="$repo_root/common/create-pipeline-context"
 action_script="$action_dir/dist/index.js"
+expected_runtime="node$(node -p "process.versions.node.split('.')[0]")"
 
 if ! command -v node >/dev/null 2>&1; then
   echo "node is required but was not found in PATH" >&2
@@ -29,7 +30,7 @@ run_success_case() {
     node dist/index.js
   )
 
-  grep -F '"service":"matcher-demo","runtime":"node24"' "$output_file" >/dev/null
+  grep -F "\"service\":\"matcher-demo\",\"runtime\":\"$expected_runtime\"" "$output_file" >/dev/null
   grep -F '["unit-1","unit-2"]' "$output_file" >/dev/null
   cat "$output_file"
   rm -f "$output_file"

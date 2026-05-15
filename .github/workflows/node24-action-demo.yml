@@ -51,7 +51,7 @@ jobs:
         uses: ./common/js-action-template
         with:
           name: matcher-demo
-          payload: '{"feature":"node24"}'
+          payload: '{"feature":"runtime-check"}'
 
       - name: Show JS action template outputs
         run: |
