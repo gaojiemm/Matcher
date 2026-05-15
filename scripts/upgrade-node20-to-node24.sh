@@ -12,6 +12,12 @@ while IFS= read -r file; do
     continue
   fi
 
+  case "$file" in
+    "scripts/upgrade-node20-to-node24.sh"|".github/workflows/upgrade-node20-to-node24.yml"|"README.md")
+      continue
+      ;;
+  esac
+
   if ! grep -Iq . "$file"; then
     continue
   fi
