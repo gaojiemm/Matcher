@@ -4,6 +4,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
+SCRIPT_ABS_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
+SCRIPT_REL_PATH="${SCRIPT_ABS_PATH#"$ROOT_DIR"/}"
 
 changed_files=()
 
@@ -13,7 +15,7 @@ while IFS= read -r file; do
   fi
 
   case "$file" in
-    "scripts/upgrade-node20-to-node24.sh"|".github/workflows/upgrade-node20-to-node24.yml"|"README.md")
+    "$SCRIPT_REL_PATH"|".github/workflows/upgrade-node20-to-node24.yml"|"README.md")
       continue
       ;;
   esac

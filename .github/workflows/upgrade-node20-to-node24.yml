@@ -34,7 +34,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "chore: automate Node 20 to Node 24 upgrade"
+          git commit -m "chore: automate Node 20 to Node 24 upgrade (run ${GITHUB_RUN_ID})"
           git push origin "$branch"
 
           echo "has_changes=true" >> "$GITHUB_OUTPUT"
