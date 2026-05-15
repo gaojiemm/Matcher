@@ -1,0 +1,59 @@
+name: Node 24 Action Demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/node24-action-demo.yml'
+      - 'common/create-pipeline-context/**'
+      - 'common/decide-env/**'
+      - 'common/js-action-template/**'
+
+jobs:
+  demo-node24-action:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run upgraded local action
+        id: pipeline-context
+        uses: ./common/create-pipeline-context
+        with:
+          service: matcher-demo
+          test-parallel-keys: '["unit-1","unit-2"]'
+
+      - name: Show action outputs
+        run: |
+          echo "pipeline-context=${{ steps.pipeline-context.outputs.pipeline-context }}"
+          echo "test_parallel_keys=${{ steps.pipeline-context.outputs.test_parallel_keys }}"
+
+      - name: Decide environment
+        id: decide-env
+        uses: ./common/decide-env
+        with:
+          branch-name: release/2026.05
+
+      - name: Show decide-env outputs
+        run: |
+          echo "environment=${{ steps.decide-env.outputs.environment }}"
+          echo "deploy_enabled=${{ steps.decide-env.outputs.deploy_enabled }}"
+
+      - name: Run JS action template
+        id: js-template
+        uses: ./common/js-action-template
+        with:
+          name: matcher-demo
+          payload: '{"feature":"node24"}'
+
+      - name: Show JS action template outputs
+        run: |
+          echo "message=${{ steps.js-template.outputs.message }}"
+          echo "payload=${{ steps.js-template.outputs.payload }}"

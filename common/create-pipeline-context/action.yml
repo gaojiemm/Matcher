@@ -1,0 +1,21 @@
+name: create-pipeline-context
+description: Demo JavaScript action upgraded from Node 20 to Node 24
+
+inputs:
+  service:
+    description: Service name used in the generated context
+    required: true
+  test-parallel-keys:
+    description: Test matrix partition keys as a JSON array
+    required: false
+    default: '[]'
+
+outputs:
+  pipeline-context:
+    description: JSON encoded pipeline context
+  test_parallel_keys:
+    description: Test matrix partition list
+
+runs:
+  using: node24
+  main: dist/index.js

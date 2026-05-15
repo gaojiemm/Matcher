@@ -1,0 +1,22 @@
+name: decide-env
+description: Decide a deployment environment from a branch or ref on Node 24
+
+inputs:
+  branch-name:
+    description: Branch name to inspect
+    required: false
+    default: ''
+  github-ref:
+    description: Full Git ref to inspect when branch-name is not provided
+    required: false
+    default: ''
+
+outputs:
+  environment:
+    description: Selected deployment environment
+  deploy_enabled:
+    description: Whether deployment should run for the selected environment
+
+runs:
+  using: node24
+  main: dist/index.js

@@ -1,0 +1,21 @@
+name: js-action-template
+description: Minimal JavaScript action template upgraded from Node 20 to Node 24
+
+inputs:
+  name:
+    description: Name to greet
+    required: true
+  payload:
+    description: JSON object payload used by the template
+    required: false
+    default: '{}'
+
+outputs:
+  message:
+    description: Generated greeting message
+  payload:
+    description: Normalized JSON payload
+
+runs:
+  using: node24
+  main: dist/index.js

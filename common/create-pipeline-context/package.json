@@ -1,0 +1,21 @@
+{
+  "name": "create-pipeline-context",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo GitHub Action upgraded to the Node 24 runtime.",
+  "main": "dist/index.js",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "ncc build src/index.js -o dist",
+    "package": "npm run build"
+  },
+  "dependencies": {
+    "@actions/core": "^1.11.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.3"
+  }
+}
