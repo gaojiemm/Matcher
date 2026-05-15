@@ -211,9 +211,9 @@ bash scripts/emit-imagepull-errors.sh
 bash scripts/upgrade-node20-to-node24.sh
 ```
 
-### GitHub Actions で一鍵操作で実行
+### GitHub Actions で一鍵で実行
 
-1. Actions タブで `One-click Node 20 to 24 Upgrade` を実行
+1. Actions タブで `One-click Node 20 to 24 Upgrade` を選択して実行
 2. 変更があれば `automation/node24-upgrade-<run_id>` ブランチが自動作成される
 3. そのブランチから PR を作成して取り込む
 
