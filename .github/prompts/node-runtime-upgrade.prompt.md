@@ -70,7 +70,14 @@ copilot -p "$(cat .github/prompts/node-runtime-upgrade.prompt.md)
 | `node-version` | `<現行>` | `<target>` |
 | ドキュメント内のバージョン記述 | `Node <現行>` / `node<現行>` | `Node <target>` / `node<target>` |
 
-無関係な業務ロジックは変更しない。スキャンで検出したバージョン宣言のみを更新する。
+**⚠️ 編集ルール（必ず守ること）：**
+
+- **`package.json` の編集は「既存ファイルを読む → 該当行だけ書き換える」の2ステップで行うこと。**
+  - ステップ1：`read_file` でファイルの現在の内容を取得する
+  - ステップ2：取得した内容の `engines.node` の値のみを置換して書き戻す
+- `scripts`・`main`・`version`・`description`・`dependencies`・`devDependencies`・その他のフィールドは**読んだまま維持する。一文字も変えない。**
+- ファイルを新しいテンプレートで上書きすることは厳禁。既存の構造（TypeScript toolchain 等）を壊す。
+- ビルド・テスト・lint が失敗した場合のみ、エラーメッセージを読んで原因の依存関係バージョンをピンポイントで修正する。それ以外の変更は不要。
 
 ### 5. 整合確認
 
