@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=24"
+    "node": ">= 24"
   },
   "scripts": {
     "build": "ncc build src/index.js -o dist",
